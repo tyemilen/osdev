@@ -1,0 +1,4 @@
+#ifndef DISPLAY_COLORS_H_
+#define DISPLAY_COLORS_H
+
+#endif // DISPLAY_COLORS_H_
