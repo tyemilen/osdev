@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void rtc_init();
+void rtc_date();
 
 uint8_t rtc_get_year();
 uint8_t rtc_get_month();

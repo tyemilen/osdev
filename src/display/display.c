@@ -7,36 +7,60 @@
 
 struct _display display = {
 	.x = 0,
-	.y = 0,
-	.lines = 0
+	.y = 0
 };
 
-void display_disable_cursor() {
+int display_get_y() {
+	return display.y;
+}
 
+int display_get_x() {
+	return display.x;
+}
+
+void display_clear_row(int y) {
+	for (int x = 0; x < VGA_WIDTH; ++x) {
+		display_putch(0, 0, 0, x, y);
+	}
+
+	display.x = 0;
+}
+
+void display_clear(int x, int y) {
+	if (x == VGA_WIDTH && y == VGA_HEIGHT) {
+		display.x = 0;
+		display.y = 0;
+
+		return;
+	}
+
+	display_putch(0, 0, 0, x, y);
+
+	if (x == VGA_WIDTH) {
+		display_clear(0, y + 1);
+	} else {
+		display_clear(x + 1, y);
+	};
+}
+
+void display_disable_cursor() {
 	io_write8(0x3D4, 0x0A);
 	io_write8(0x3D5, 0x20);
 }
 
 void display_enable_cursor() {
+	uint16_t pos = display.y * VGA_WIDTH + display.x;
+
 	io_write8(0x3D4, 0x0A);
-	io_write8(0x3D5, (io_read8(0x3D5) & 0xC0) | display.x);
+	io_write8(0x3D5, (uint8_t) (pos & 0xFF));
  
 	io_write8(0x3D4, 0x0B);
-	io_write8(0x3D5, (io_read8(0x3D5) & 0xE0) | display.y);
+	io_write8(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
 void display_init() {
 	display_disable_cursor();
-
-    volatile char* video = (volatile char*)0xB8000;
-
-    for (int i = 0; i < VGA_WIDTH; ++i) {
-        *video++ = 0;
-
-        for (int j = 0; j < VGA_HEIGHT; ++j) {
-            *video++ = 0;
-        }
-    }
+	display_clear(0, 0);
 }
 
 void display_update_cursor(int x, int y) {
@@ -53,8 +77,6 @@ void display_putch(unsigned char c, unsigned char forecolour, unsigned char back
 	volatile uint16_t* where = (volatile uint16_t *)0xB8000 + (y * VGA_WIDTH + x);
 	
 	*where = c | (attrib << 8);
-
-	display_update_cursor(x, y);
 }
 
 void display_write_string(const char* string, int color) {
@@ -62,10 +84,10 @@ void display_write_string(const char* string, int color) {
 		char ch = *string++;
 
 		if (ch == '\n') {
-			display.lines += 1;
 			display.y += 1;
 			display.x = 0;
 
+			display_putch(0, 0, 0, display.x, display.y);
 			continue;
 		}
 
@@ -75,14 +97,20 @@ void display_write_string(const char* string, int color) {
 }
 
 void putch(unsigned char c) {
+	if (display.y >= VGA_HEIGHT) {
+		display.y = 0;
+		display_clear(0, 0);
+	}
+
 	if (c == '\n') {
-		display.lines += 1;
 		display.y += 1;
 		display.x = 0;
+		display_update_cursor(display.x, display.y);
 		return;
 	}
 
-	display_putch(c, 14, 0, display.x, display.y);
-
 	display.x += 1;
+
+	display_putch(c, 15, 0, display.x, display.y);
+	display_update_cursor(display.x, display.y);
 }

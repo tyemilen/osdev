@@ -7,9 +7,13 @@
 struct _display {
     int x;
     int y;
-
-    int lines;
 };
+
+void display_clear(int x, int y);
+void display_clear_row(int y);
+
+int display_get_y();
+int display_get_x();
 
 void display_enable_cursor();
 void display_disable_cursor();

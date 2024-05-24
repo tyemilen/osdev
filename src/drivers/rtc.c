@@ -3,8 +3,8 @@
 #include "stdio.h"
 #include "io/hal.h"
 
-void rtc_init() {
-	printf("Current time: 20%d, %d. %d. %d:%d:%d\n",
+void rtc_date() {
+	printf("\nCurrent time: 20%d, %d. %d. %d:%d:%d\n",
 			rtc_get_year(), rtc_get_month(), rtc_get_day(),
 			rtc_get_hour(), rtc_get_minute(), rtc_get_second());
 }

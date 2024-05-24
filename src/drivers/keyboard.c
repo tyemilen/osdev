@@ -21,13 +21,17 @@ const char keycode[] = {
 	0, ' '
 };
 
-char keyboard_get_key() {
+unsigned char keyboard_get_key() {
     unsigned char scancode = io_read8(0x60);
 
     if (scancode & 0x80) {
 		return 0;
     } else {
 		io_write8(0x60, 3);
-		return keycode[scancode];
+		return scancode;
     }
+}
+
+char keyboard_key2ascii(unsigned char code) {
+	return keycode[code];
 }
