@@ -1,12 +1,14 @@
 #ifndef VGA_H_
 #define VGA_H_
 
+#include "colors.h"
+
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
 struct _display {
-    int x;
-    int y;
+	int x;
+	int y;
 };
 
 void display_clear(int x, int y);

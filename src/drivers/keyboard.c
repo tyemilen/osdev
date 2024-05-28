@@ -1,7 +1,7 @@
 #include "drivers/keyboard.h"
 
-#include "stdio.h"
 #include "io/hal.h"
+#include "stdio.h"
 
 const char keycode[] = {
 	0, 0, '1', '2',
@@ -18,18 +18,17 @@ const char keycode[] = {
 	'z', 'x', 'c', 'v',
 	'b', 'n', 'm', ',',
 	'.', '/', 0, '*',
-	0, ' '
-};
+	0, ' '};
 
 unsigned char keyboard_get_key() {
-    unsigned char scancode = io_read8(0x60);
+	unsigned char scancode = io_read8(0x60);
 
-    if (scancode & 0x80) {
+	if (scancode & 0x80) {
 		return 0;
-    } else {
+	} else {
 		io_write8(0x60, 3);
 		return scancode;
-    }
+	}
 }
 
 char keyboard_key2ascii(unsigned char code) {

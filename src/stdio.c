@@ -5,8 +5,7 @@
 
 #include "display/display.h"
 
-int printf(char *msg, ...)
-{
+int printf(char *msg, ...) {
 	char curchar = *msg;
 	char *ch = 0;
 	char *str;
@@ -37,10 +36,10 @@ int printf(char *msg, ...)
 					break;
 
 				case 'd':
-					char* number = 0;
+					char *number = 0;
 
 					int d = va_arg(args, int);
-					
+
 					itoa(d, number, 10);
 
 					printf(number);
